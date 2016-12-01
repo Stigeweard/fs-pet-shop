@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
 
@@ -23,6 +24,7 @@ function newPet(age, kind, name) {
 
 if (!cmd) {
     console.error(`Usage: ${node} ${dir} [read | create | update | destroy]`);
+    process.exit(1);
 } else if (cmd === 'read') {
     fs.readFile('pets.json', (err, data) => {
         const petData = JSON.parse(data);
@@ -43,11 +45,12 @@ if (!cmd) {
             throw err;
         }
 
-        if (!thirdArg || !fourthArg || !secondArg) {
+        if (!thirdArg || !fourthArg || !secondArg || isNaN(secondArg)) {
             console.error(`Usage: ${node} ${dir} ${cmd} AGE KIND NAME`);
-            process.exit[1];
+            process.exit(1);
         } else {
             let pets = JSON.parse(data);
+
             pets.push(newPet(secondArg, thirdArg, fourthArg));
             pets = JSON.stringify(pets);
 
@@ -65,10 +68,9 @@ if (!cmd) {
         if (err) {
             throw err;
         }
-
         if (!thirdArg || !fourthArg || !secondArg || !fifthArg) {
             console.error(`Usage: ${node} ${dir} ${cmd} INDEX AGE KIND NAME`);
-            process.exit[1];
+            process.exit(1);
         } else {
             let pets = JSON.parse(data);
             pets[secondArg] = newPet(thirdArg, fourthArg, fifthArg);
@@ -91,7 +93,7 @@ if (!cmd) {
 
         if (!secondArg) {
             console.error(`Usage: ${node} ${dir} ${cmd} INDEX`);
-            process.exit[1];
+            process.exit(1);
         } else {
             let pets = JSON.parse(data);
             const destroyedPet = pets.splice(secondArg, 1);
@@ -101,7 +103,7 @@ if (!cmd) {
                 if (writeErr) {
                     throw writeErr;
                 } else {
-                    console.log(destroyedPet);
+                    console.log(destroyedPet[0]);
                 }
             });
         }
