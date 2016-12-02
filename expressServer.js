@@ -1,40 +1,41 @@
 'use strict';
 
-const http = require('http');
-const port = 8080;
 const express = require('express');
-
-const fs = require('fs');
 const path = require('path');
+const fs = require('fs');
+const port = 8080;
+
 const petsPath = path.join(__dirname, 'pets.json');
 
-function fetchPets() {
-    let petData = null;
+const server = express();
 
-    return petData;
-}
+server.get('/pets', (req, res) => {
+    fs.readFile(petsPath, (err, data) => {
+        if (err) throw err;
+        res.send(JSON.parse(data));
+    })
+})
 
-function handleRequest(req, res) {
-    if (req.method === 'GET' && req.url === '/pets') {
-        fs.readFile(petsPath, (err, data) => {
-            res.setHeader('Content-Type', 'application/json');
-            let petData = JSON.parse(data);
-            console.log(petData);
-            res.end(JSON.stringify(petData));
-        })
-    }
-    // res.setHeader('Content-Type', 'text/plain');
-    // res.end('It works! Path: ' + req.url);
-}
+server.get('/pets/:index', (req, res) => {
+    let index = Number.parseInt(req.params.index);
+    fs.readFile(petsPath, (err, data) => {
+        if (err) throw err;
+        if (!JSON.parse(data)[index]) {
+            return res.sendStatus(404);
+        }
+        res.send(JSON.parse(data)[index]);
+    })
 
-const server = http.createServer(handleRequest);
+})
+
 
 server.listen(port, (err) => {
     if (err) {
         return console.log('something bad happened', err)
     }
 
-    console.log('Server listening on port: ', port);
+    console.log('Server listening on port:', port);
 });
 
 // http.get('/pets')
+module.exports = server;
