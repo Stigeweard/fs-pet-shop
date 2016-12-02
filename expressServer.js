@@ -19,11 +19,12 @@ server.get('/pets', (req, res) => {
 server.get('/pets/:index', (req, res) => {
     let index = Number.parseInt(req.params.index);
     fs.readFile(petsPath, (err, data) => {
+        let parsedData = JSON.parse(data);
         if (err) throw err;
-        if (!JSON.parse(data)[index]) {
+        if (!parsedData[index]) {
             return res.sendStatus(404);
         }
-        res.send(JSON.parse(data)[index]);
+        res.send(parsedData[index]);
     })
 
 })
@@ -37,5 +38,4 @@ server.listen(port, (err) => {
     console.log('Server listening on port:', port);
 });
 
-// http.get('/pets')
 module.exports = server;
