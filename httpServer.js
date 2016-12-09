@@ -25,8 +25,7 @@ function handleRequest(req, res) {
     }
 }
 
-const server = http.createServer(handleReq
-    uest);
+const server = http.createServer(handleRequest);
 
 server.listen(port, (err) => {
     if (err) {
